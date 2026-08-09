@@ -7,7 +7,23 @@
 //
 //   node corpus-health.js            # human report
 //   node corpus-health.js --json     # machine-readable (for trend tracking)
-import { listPages } from "./adapter.js";
+/** Load the user's adapter, with a useful message if it isn't set up yet. */
+async function loadAdapter() {
+  try {
+    return await import("./adapter.js");
+  } catch (e) {
+    if (e.code === "ERR_MODULE_NOT_FOUND" && /adapter\.js/.test(e.message)) {
+      console.error(
+        "\n  No adapter.js found.\n\n" +
+        "  This kit talks to your system through one file:\n" +
+        "      cp adapter.example.js adapter.js\n" +
+        "  then implement listPages() (Stage 0) and ask() (Stages 2-3).\n"
+      );
+      process.exit(1);
+    }
+    throw e;
+  }
+}
 
 // Similarity is Jaccard over word shingles. SHINGLE=3 because wiki pages are
 // often short: at n=5 a genuinely-related pair of short pages scored 0.19 (missed),
@@ -48,6 +64,7 @@ const daysOld = (iso) => (iso ? Math.floor((Date.now() - Date.parse(iso)) / 8640
 
 async function main() {
   const json = process.argv.includes("--json");
+  const { listPages } = await loadAdapter();
   const pages = await listPages();
   const prepped = pages.map((p) => ({ ...p, sh: shingles(p.text), vals: values(p.text) }));
 

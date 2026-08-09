@@ -17,7 +17,23 @@
 //   2. Freeze the source snapshot before a comparison, or the corpus shifts
 //      underneath you and the A/B is meaningless.
 import { readFile } from "node:fs/promises";
-import * as adapter from "./adapter.js";
+/** Load the user's adapter, with a useful message if it isn't set up yet. */
+async function loadAdapter() {
+  try {
+    return await import("./adapter.js");
+  } catch (e) {
+    if (e.code === "ERR_MODULE_NOT_FOUND" && /adapter\.js/.test(e.message)) {
+      console.error(
+        "\n  No adapter.js found.\n\n" +
+        "  This kit talks to your system through one file:\n" +
+        "      cp adapter.example.js adapter.js\n" +
+        "  then implement listPages() (Stage 0) and ask() (Stages 2-3).\n"
+      );
+      process.exit(1);
+    }
+    throw e;
+  }
+}
 
 const arg = (name, dflt) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -46,7 +62,7 @@ const UNKNOWN = new RegExp(
 );
 
 /** Grade one answer. Returns {pass, why}. */
-async function grade(q, answer) {
+async function grade(q, answer, adapter) {
   const text = String(answer ?? "");
 
   if (q.mustSayUnknown) {
@@ -69,6 +85,7 @@ async function grade(q, answer) {
 }
 
 async function main() {
+  const adapter = await loadAdapter();
   const runs = Number(arg("runs", "1"));
   const conditions = String(arg("conditions", "default")).split(",").filter(Boolean);
   const asJson = process.argv.includes("--json");
@@ -84,7 +101,7 @@ async function main() {
         let answer = "", err = null;
         try { answer = await adapter.ask(q.question, { condition }); }
         catch (e) { err = e.message; }
-        const g = err ? { pass: false, why: `error: ${err}` } : await grade(q, answer);
+        const g = err ? { pass: false, why: `error: ${err}` } : await grade(q, answer, adapter);
         if (g.pass) pass++; else whys.push(g.why);
       }
       cells[condition] = { pass, runs, whys: [...new Set(whys)] };

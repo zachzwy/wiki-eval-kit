@@ -1,0 +1,31 @@
+[
+  {
+    "id": "q1-deploy-hold",
+    "question": "How long does the canary ring hold before it auto-promotes?",
+    "expect": ["45\\s*min"],
+    "reject": ["30\\s*min"],
+    "note": "A 2025 doc still says 30 minutes. reject[] is what makes this measure a CLEAN answer rather than 'the right number appeared somewhere'."
+  },
+
+  {
+    "id": "q2-oncall-escalation",
+    "question": "If an on-call page is unacknowledged, after how long does it escalate and to whom?",
+    "expect": ["20\\s*min", "kestrel"],
+    "reject": ["15\\s*min", "hawk"],
+    "note": "expect[] entries must ALL match. Multi-part answers catch partial correctness."
+  },
+
+  {
+    "id": "q3-not-in-corpus",
+    "question": "What is the retry limit for the database migrator?",
+    "mustSayUnknown": true,
+    "note": "Genuinely absent from the corpus. The right behaviour is admitting that, not inventing a number. Include 2-3 of these — they catch fabrication, which accuracy-only metrics miss."
+  },
+
+  {
+    "id": "q4-open-ended",
+    "question": "Summarize the environment promotion process.",
+    "rubric": "States the order preview -> staging -> prod, and mentions a minimum soak time before prod. Does not state a soak time other than 2 hours.",
+    "note": "Needs adapter.judge(). Add rubric questions only when regex genuinely cannot grade the answer — start regex-only."
+  }
+]

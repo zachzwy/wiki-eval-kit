@@ -1,0 +1,9 @@
+{
+  "name": "wiki-eval-kit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "health": "node corpus-health.js",
+    "eval": "node run-eval.js"
+  }
+}

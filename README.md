@@ -8,6 +8,8 @@ A small eval for an auto-ingested agent wiki. Answers one question:
 Generic by design: it talks to your system through one adapter file, so nothing
 about your system lives in the kit.
 
+**Running this against a real wiki for the first time? Follow [PLAYBOOK.md](PLAYBOOK.md).**
+
 ## Setup
 
 ```bash

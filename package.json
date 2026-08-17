@@ -5,5 +5,11 @@
   "scripts": {
     "health": "node corpus-health.js",
     "eval": "node run-eval.js"
+  },
+  "license": "MIT",
+  "description": "A staged eval for an auto-ingested agent wiki: corpus health, epistemic health, and clean-answer rate.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachzwy/wiki-eval-kit.git"
   }
 }

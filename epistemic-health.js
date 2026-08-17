@@ -2,7 +2,7 @@
 // @ts-check
 // STAGE 0 (conceptual corpus) — epistemic health.
 //
-//   node epistemic-health.js [--root /path/to/wiki] [--json]
+//   node epistemic-health.js [--root <wiki-dir>] [--json]
 //
 // The companion to corpus-health.js. That one is for OPERATIONAL corpora, where a
 // contradiction is two pages asserting different values ("45 minutes" vs "30
@@ -29,7 +29,7 @@ const argOf = (n, d) => {
   const i = process.argv.indexOf(`--${n}`);
   return i !== -1 && process.argv[i + 1] && !process.argv[i + 1].startsWith("--") ? process.argv[i + 1] : d;
 };
-const ROOT = path.resolve(argOf("root", process.env.WIKI_ROOT ?? "/mnt/f/Projects/wiki"));
+const ROOT = path.resolve(argOf("root", process.env.WIKI_ROOT ?? "."));
 const PAGE_DIRS = ["concepts", "techniques", "tools", "people", "questions", "notes", "evals"];
 
 const split = (md) => {
